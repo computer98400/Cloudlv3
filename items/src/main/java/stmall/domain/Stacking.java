@@ -19,15 +19,17 @@ public class Stacking {
 
     private String productName;
 
+    private Long ProductId;
+
     private Integer stock;
 
     @PostUpdate
     public void onPostUpdate() {
-        OutofStock outofStock = new OutofStock(this);
-        outofStock.publishAfterCommit();
+        // OutofStock outofStock = new OutofStock(this);
+        // outofStock.publishAfterCommit();
 
-        StockIncreased stockIncreased = new StockIncreased(this);
-        stockIncreased.publishAfterCommit();
+        // StockIncreased stockIncreased = new StockIncreased(this);
+        // stockIncreased.publishAfterCommit();
     }
 
     public static StackingRepository repository() {
@@ -46,18 +48,18 @@ public class Stacking {
         outofStock.publishAfterCommit();
         */
 
-        /** Example 2:  finding and process
+        // Example 2:  finding and process
         
-        repository().findById(deliveryCompleted.get???()).ifPresent(stacking->{
+        repository().findById(deliveryCompleted.getProductId()).ifPresent(stacking->{
             
-            stacking // do something
+            stacking.setStock(stacking.getStock()-1); // do something
             repository().save(stacking);
 
             OutofStock outofStock = new OutofStock(stacking);
             outofStock.publishAfterCommit();
 
          });
-        */
+        
 
     }
 
@@ -70,18 +72,15 @@ public class Stacking {
         stockIncreased.publishAfterCommit();
         */
 
-        /** Example 2:  finding and process
-        
-        repository().findById(deliveryReturned.get???()).ifPresent(stacking->{
+        repository().findById(deliveryReturned.getProductId()).ifPresent(stacking->{
             
-            stacking // do something
+            stacking.setStock(stacking.getStock()+1); // do something
             repository().save(stacking);
 
-            StockIncreased stockIncreased = new StockIncreased(stacking);
-            stockIncreased.publishAfterCommit();
+            OutofStock outofStock = new OutofStock(stacking);
+            outofStock.publishAfterCommit();
 
          });
-        */
 
     }
 }

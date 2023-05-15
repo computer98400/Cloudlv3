@@ -34,11 +34,10 @@ public class Ordering {
     @PostRemove
     public void onPostRemove() {
         OrderCancelled orderCancelled = new OrderCancelled(this);
+
         orderCancelled.publishAfterCommit();
     }
 
-    @PreRemove
-    public void onPreRemove() {}
 
     public static OrderingRepository repository() {
         OrderingRepository orderingRepository = OrderApplication.applicationContext.getBean(

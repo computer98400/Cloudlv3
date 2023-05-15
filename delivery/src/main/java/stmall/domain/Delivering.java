@@ -31,16 +31,16 @@ public class Delivering {
 
     private String courier;
 
-    @PostPersist
-    public void onPostPersist() {
-        DeliveryStarted deliveryStarted = new DeliveryStarted(this);
-        deliveryStarted.publishAfterCommit();
-    }
+    // @PostPersist
+    // public void onPostPersist() {
+    //     // DeliveryStarted deliveryStarted = new DeliveryStarted(this);
+    //     // deliveryStarted.publishAfterCommit();
+    // }
 
     @PostUpdate
     public void onPostUpdate() {
-        DeliveryCancelled deliveryCancelled = new DeliveryCancelled(this);
-        deliveryCancelled.publishAfterCommit();
+        // DeliveryCancelled deliveryCancelled = new DeliveryCancelled(this);
+        // deliveryCancelled.publishAfterCommit();
     }
 
     public static DeliveringRepository repository() {
@@ -53,36 +53,42 @@ public class Delivering {
     public void deliveryComplete(
         DeliveryCompleteCommand deliveryCompleteCommand
     ) {
+        this.setCourier(deliveryCompleteCommand.getCourier());
+        this.setStatus("delivery Completed");
         DeliveryCompleted deliveryCompleted = new DeliveryCompleted(this);
         deliveryCompleted.publishAfterCommit();
     }
 
     public void returnDelivery(ReturnDeliveryCommand returnDeliveryCommand) {
+        this.setCourier(returnDeliveryCommand.getCourier());
+        this.setStatus("delivery Returned");
         DeliveryReturned deliveryReturned = new DeliveryReturned(this);
         deliveryReturned.publishAfterCommit();
     }
 
     public static void deliveryStart(Ordered ordered) {
-        /** Example 1:  new item 
+        // Example 1:  new item 
         Delivering delivering = new Delivering();
+        delivering.setOrderId(ordered.getId());
+        delivering.setProductId(ordered.getProductId());
+        delivering.setProductName(ordered.getProductName());
+        delivering.setQty(Long.parseLong(ordered.getQty().toString()));
+        delivering.setStatus("Delivery Started");
         repository().save(delivering);
 
         DeliveryStarted deliveryStarted = new DeliveryStarted(delivering);
         deliveryStarted.publishAfterCommit();
-        */
 
-        /** Example 2:  finding and process
+        //Example 2:  finding and process
         
-        repository().findById(ordered.get???()).ifPresent(delivering->{
-            
-            delivering // do something
-            repository().save(delivering);
+        // repository().findById(ordered.getId()).ifPresent(delivering->{            
+        //     delivering.setStatus("returned"); // do something
+        //     repository().save(delivering);
 
-            DeliveryStarted deliveryStarted = new DeliveryStarted(delivering);
-            deliveryStarted.publishAfterCommit();
+        //     DeliveryStarted deliveryStarted = new DeliveryStarted(delivering);
+        //     deliveryStarted.publishAfterCommit();
 
-         });
-        */
+        //  });
 
     }
 
@@ -95,18 +101,17 @@ public class Delivering {
         deliveryCancelled.publishAfterCommit();
         */
 
-        /** Example 2:  finding and process
+        // Example 2:  finding and process
         
-        repository().findById(orderCancelled.get???()).ifPresent(delivering->{
+        repository().findByOrderId(orderCancelled.getId()).ifPresent(delivering->{
             
-            delivering // do something
+            delivering.setStatus("delivery Cancelld"); // do something
             repository().save(delivering);
 
             DeliveryCancelled deliveryCancelled = new DeliveryCancelled(delivering);
             deliveryCancelled.publishAfterCommit();
 
          });
-        */
 
     }
 }

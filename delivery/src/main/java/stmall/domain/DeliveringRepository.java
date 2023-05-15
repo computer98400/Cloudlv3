@@ -9,4 +9,6 @@ import stmall.domain.*;
     path = "deliverings"
 )
 public interface DeliveringRepository
-    extends PagingAndSortingRepository<Delivering, Long> {}
+    extends PagingAndSortingRepository<Delivering, Long> {
+        java.util.Optional<Delivering> findByOrderId(Long id);
+    }
